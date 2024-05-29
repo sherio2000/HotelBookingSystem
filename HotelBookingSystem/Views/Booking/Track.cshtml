@@ -1,0 +1,206 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+
+<header class="site-header js-site-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-6 col-lg-4 site-logo" data-aos="fade"><a asp-controller="Home" asp-action="Index">Mermaid Manor</a></div>
+        </div>
+    </div>
+</header>
+
+
+<section class="site-hero overlay" style="background-image: url(/images/index_image.jpg)" data-stellar-background-ratio="0.5">
+    <div class="container">
+        <div class="row site-hero-inner justify-content-center align-items-center">
+            <div class="col-md-10 text-center" data-aos="fade-up">
+                <span class="custom-caption text-uppercase text-white d-block mb-3">Welcome To 5 <span class="fa fa-star text-primary"></span> Hotel</span>
+                <h1 class="heading">Track your booking easily</h1>
+                <div class="custom-caption text-uppercase text-white d-block mb-3" data-aos="fade"><a asp-controller="Home" asp-action="Index"> Book your Room Now <span class="fa fa-caret-right ml-2 text-primary"></span> </a></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Section for inputting National ID and Search button -->
+<section id="step1" class="section bg-light pb-0 form-step active-step">
+    <div class="container">
+        <div class="row check-availabilty">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+                <form novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3 mb-lg-0 col-lg-9">
+                            <label for="national_id" class="font-weight-bold text-black">National ID</label>
+                            <div class="field-icon-wrap">
+                                <input type="text" id="national_id" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 align-self-end">
+                            <button type="button" class="btn btn-primary btn-block text-white mt-2" onclick="searchBookings()">Search</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section for displaying booking results -->
+<section id="resultsSection" class="section bg-light pb-0" style="display: none;">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-4">
+                <h2 class="font-weight-bold text-black">Booking Results</h2>
+            </div>
+            <div class="col-12">
+                <table class="table table-bordered">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th>No.</th>
+                            <th>Customer Name</th>
+                            <th>Check-in Date</th>
+                            <th>Check-out Date</th>
+                            <th>Number of Rooms</th>
+                            <th>Discount Applied</th>
+                            <th>Total Cost</th>
+                            <th>View</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTable">
+                        <!-- Booking data will be inserted here by JavaScript ta7t -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<div class="modal fade" id="bookingDetailsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Booking Details</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Branch</th>
+                            <th>Room Type</th>
+                            <th>Number of Adults</th>
+                            <th>Number of Children</th>
+                            <th>Price</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingDetailsBody">
+                        <!-- Booking details will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+
+    function searchBookings() {
+        const nationalId = $('#national_id').val();
+
+        if (!nationalId) {
+            Swal.fire({
+                title: 'Error!',
+                text: 'Please enter a National ID.',
+                icon: 'error'
+            });
+            return;
+        }
+
+        $.ajax({
+            type: "GET",
+            url: `/Booking/GetAllBookingsByNationalId`, 
+            data: { nationalId: $('#national_id').val() },
+            success: function (response) {
+                if (response && response.length > 0) {
+                    $('#resultsTable').empty();
+                    response.forEach((booking, index) => {
+                        const row = `
+                            <tr>
+                                <td>${index + 1}</td>
+                                <td>${booking.customerName}</td>
+                                <td>${new Date(booking.checkInDate).toLocaleDateString()}</td>
+                                <td>${new Date(booking.checkOutDate).toLocaleDateString()}</td>
+                                 <td>${booking.numberOfRooms}</td>
+                                <td>${booking.discountApplied}</td>
+                                <td>$${booking.totalCost}</td>
+                                    <td><button class="btn btn-info" onclick="viewBooking(${booking.bookingId})">View</button></td>
+                            </tr>
+                        `;
+                        $('#resultsTable').append(row);
+                    });
+
+                    $('#resultsSection').fadeIn(500);
+                    $('html, body').animate({
+                        scrollTop: $(window).scrollTop() + 380
+                    }, '1000');
+                } else {
+                    Swal.fire({
+                        title: 'No Results',
+                        text: 'No bookings found for the provided National ID.',
+                        icon: 'info'
+                    });
+                    $('#resultsSection').fadeOut(500);
+                }
+            },
+            error: function (xhr, status, error) {
+                Swal.fire({
+                    title: 'Oops!',
+                    text: 'We didnt find a booking using that national Id',
+                    icon: 'error'
+                });
+                console.error(xhr.responseText);
+            }
+        });
+    }
+
+
+
+
+    function viewBooking(bookingId) {
+        console.log("ID = "  + bookingId)
+        $.ajax({
+            type: "GET",
+            url: "/Booking/GetBookingById",
+            data: { id : bookingId },
+            success: function (response) {
+                var bookingDetailsBody = $('#bookingDetailsBody');
+                bookingDetailsBody.empty();
+
+                response.rooms.forEach(function (room) {
+                    var row = '<tr>' +
+                        '<td>' + response.branch + '</td>' + 
+                        '<td>' + room.typeName + '</td>' + 
+                        '<td>' + room.numberOfAdults + '</td>' +
+                        '<td>' + room.numberOfChildren + '</td>' +
+                        '<td>' + room.pricePerNight + '</td>' +
+                        '</tr>';
+                    bookingDetailsBody.append(row);
+                });
+
+                $('#bookingDetailsModal').modal('show');
+            },
+            error: function (xhr, status, error) {
+                console.error(xhr.responseText);
+            }
+        });
+    }
+</script>

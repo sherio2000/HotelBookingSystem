@@ -1,0 +1,459 @@
+﻿@{
+    ViewData["Title"] = "Home";
+}
+
+@model HotelBookingSystem.Models.DTO.BookingDto
+
+<header class="site-header js-site-header">
+    <div class="container-fluid">
+        <div class="row align-items-center">
+            <div class="col-6 col-lg-4 site-logo" data-aos="fade"><a asp-controller="Home" asp-action="Index">Mermaid Manor</a></div>
+        </div>
+    </div>
+</header>
+
+<section class="site-hero overlay" style="background-image: url(/images/index_image.jpg)" data-stellar-background-ratio="0.5">
+    <div class="container">
+        <div class="row site-hero-inner justify-content-center align-items-center">
+            <div class="col-md-10 text-center" data-aos="fade-up">
+                <span class="custom-caption text-uppercase text-white d-block mb-3">Welcome To 5 <span class="fa fa-star text-primary"></span> Hotel</span>
+                <h1 class="heading">The Best Place To Stay</h1>
+                <div class="custom-caption text-uppercase text-white d-block mb-3" data-aos="fade"><a asp-controller="Booking" asp-action="Track"> View Your bookings Now <span class="fa fa-caret-right ml-2 text-primary"></span> </a></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step1" class="section bg-light pb-0 form-step active-step">
+    <div class="container">
+        <div class="row check-availabilty">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+                <form id="form1" novalidate>
+                    <div class="row">
+                        <div class="col-md-6 mb-3 mb-lg-0 col-lg-3">
+                            <label asp-for="CheckInDate" for="checkin_date" class="font-weight-bold text-black">Check In</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-calendar"></span></div>
+                                <input asp-for="CheckInDate" type="text" id="checkin_date" class="form-control">
+                                <span asp-validation-for="CheckInDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3 mb-lg-0 col-lg-3">
+                            <label asp-for="CheckOutDate" for="checkout_date" class="font-weight-bold text-black">Check Out</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-calendar"></span></div>
+                                <input asp-for="CheckOutDate" type="text" id="checkout_date" class="form-control">
+                                <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-3 align-self-end">
+                            <label asp-for=numOfRooms for="num_rooms" class="font-weight-bold text-black">Number of Rooms</label>
+                            <input type="number" id="num_rooms" class="form-control" min="1" value="1">
+                            <span asp-validation-for="numOfRooms" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 col-lg-3 align-self-end">
+                            <button type="button" class="btn btn-primary btn-block text-white mt-2" onclick="form1Validation(1)">Continue</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step2" class="section bg-light pb-0 form-step">
+    <div class="container">
+        <div class="row check-availabilty">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+                <form id="form2">
+                    <div class="row">
+                        <div class="col-md-3 mb-3 mb-lg-0 col-lg-3">
+                            <label asp-for="BranchId" class="font-weight-bold text-black">Hotel Branch</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-angle-down"></span></div>
+                                <select id="branch_select" asp-items="ViewBag.Branches" class="form-control mb-3">
+                                </select>
+                                <span asp-validation-for="BranchId" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="room-type-container">
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step3" class="section bg-light pb-0 form-step">
+    <div class="container">
+        <div class="row check-availabilty">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+                <form id="form3">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Customer.Name" for="customer_name" class="font-weight-bold text-black">Customer Name</label>
+                            <input asp-for="Customer.Name" type="text" id="customer_name" asp-for="Customer.Name" class="form-control" placeholder="Enter your name">
+                            <span asp-validation-for="Customer.Name" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Customer.NationalId" for="national_id" class="font-weight-bold text-black">National ID</label>
+                            <input asp-for="Customer.NationalId" type="text" id="national_id" asp-for="Customer.NationalId" class="form-control" placeholder="Enter your national ID">
+                            <span asp-validation-for="Customer.NationalId" class="text-danger"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Customer.PhoneNumber" for="phone_number" class="font-weight-bold text-black">Phone Number</label>
+                            <input asp-for="Customer.PhoneNumber" type="text" id="phone_number" asp-for="Customer.PhoneNumber" class="form-control" name="PhoneNumber" placeholder="Enter your phone number">
+                            <span asp-validation-for="Customer.PhoneNumber" class="text-danger"></span>
+                        </div>
+                        <div class="row col-md-6 mb-3">
+                            <div class="col-md-6 align-self-end">
+                                <button type="button" class="btn btn-primary btn-block text-white" onclick="prevStep(3)">Back</button>
+                            </div>
+                            <div class="col-md-6 align-self-end">
+                                <button type="button" class="btn btn-primary btn-block text-white" onclick="form3Validation(3)">Continue</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="step4" class="section bg-light pb-0 form-step">
+    <div class="container">
+        <div class="row check-availabilty">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+                <form method="post" id="form4" >
+                    <!-- Checkout Summary Title -->
+                    <div class="row">
+                        <div class="col-12 text-center mb-4">
+                            <h2 class="font-weight-bold text-black">Checkout Summary</h2>
+                        </div>
+                    </div>
+                    <!-- Checkout Details -->
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-black">Rooms Selected</h4>
+                            <div id="room-summary">
+                                <!-- Room details will be pleaced here by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-black">Guests</h4>
+                            <p id="guest-summary">Number of Adults: <span id="summary-adults"></span>, Number of Children: <span id="summary-children"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-black">Subtotal</h4>
+                            <p id="subtotal-price">$<span id="subtotal-amount"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-black">Discounts/Coupons</h4>
+                            <p id="discounts">$<span id="discount-amount"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-12">
+                            <h4 class="font-weight-bold text-black">Total Price</h4>
+                            <p id="total-price">$<span id="total-amount"></span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-3 align-self-end">
+                            <button type="button" class="btn btn-primary btn-block text-white" onclick="prevStep(4)">Back</button>
+                        </div>
+                        <div class="col-md-6 col-lg-3 align-self-end">
+                            <button type="button" onclick="submitForm()" class="btn btn-primary btn-block text-white">Checkout</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div id="roomTypeOptionsTemplate" style="display:none;">
+    @foreach (var item in ViewBag.RoomTypes)
+    {
+        <option value="@item.Value">@item.Text</option>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const roomTypeId = null
+        function submitForm() {
+            // Gather data from all form steps
+            const formData = {
+                Customer: {
+                    Name: $('#customer_name').val(),
+                    NationalId: $('#national_id').val(),
+                    PhoneNumber: $('#phone_number').val()
+                },
+                BranchId: $('#branch_select').val(),
+                CheckInDate: $('#checkin_date').val(),
+                CheckOutDate: $('#checkout_date').val(),
+                numOfRooms: $('#num_rooms').val(),
+                Rooms: []
+            };
+
+            for (let i = 1; i <= formData.numOfRooms; i++) {
+                console.log('reached')
+                // Check if the room is selected
+                if ($(`#room_type_${i}`).val() !== "") {
+                    const roomData = {
+                        RoomTypeId: $(`#room_type_${i}`).val(),
+                        NumberOfAdults: $(`#adults_${i}`).val(),
+                        NumberOfChildren: $(`#children_${i}`).val()
+                    };
+                    formData.Rooms.push(roomData);
+                }
+            }
+
+            console.log(formData)
+            // Submit the form data to the server
+            $.ajax({
+                url: '/Booking/AddBooking', 
+                method: 'POST',
+                data: formData,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: 'Congrats!!',
+                            text: "You have booked succesfully!",
+                            icon: 'success'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = '/'; 
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Oops! Something went wrong!',
+                            text: response.message,
+                            icon: 'error'
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+
+                }
+            });
+        }
+
+        function form1Validation(step) {
+            if ($('#checkin_date').val() != "" && $('#checkout_date').val() != "" && $('#num_rooms').val() >= 1) {
+                $('#step' + step).fadeOut(250, function () {
+                    if (step === 1) {
+                        generateRoomTypeSections();
+                    }
+                    $('#step' + (step + 1)).fadeIn(250);
+                });
+            } else {
+                Swal.fire({
+                    title: 'Oops! Something went wrong!',
+                    text: 'Make sure to fill in all fields',
+                    icon: 'error'
+                });
+            }
+ 
+        }
+        function nextStep(step) {
+            $('#step' + step).fadeOut(250, function () {
+                if (step === 1) {
+                    generateRoomTypeSections();
+                }
+                $('#step' + (step + 1)).fadeIn(250);
+            });
+
+        }
+
+        function form3Validation(step) {
+            if ($('#customer_name').val() != "" && $('#national_id').val() != "" && $('#phone_number').val() != "") {
+
+                $.ajax({
+                    type: "GET",
+                    url: "/Booking/GetBookingCount",
+                    data: { nationalId: $('#national_id').val() },
+                    success: function (count) {
+                        generateCheckoutSummary(step, count)
+
+                    },
+                    error: function (xhr, status, error) {
+                        console.error(xhr.responseText);
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: 'Oops! Something went wrong!',
+                    text: 'Make sure to fill in all fields',
+                    icon: 'error'
+                });
+            }
+
+        }
+
+        function prevStep(step) {
+            $('#step' + step).fadeOut(500, function () {
+                $('#step' + (step - 1)).fadeIn(500);
+            });
+        }
+
+        function generateRoomTypeSections() {
+            const numRooms = $('#num_rooms').val();
+            const container = $('#room-type-container');
+            const roomTypeOptions = $('#roomTypeOptionsTemplate').html();
+            container.empty();
+
+
+
+            for (let i = 1; i <= numRooms; i++) {
+                container.append(`
+                        <div class="col-md-3 mb-3 mb-lg-0 col-lg-3">
+                            <label for="room_type_${i}" class="font-weight-bold text-black">Room Type ${i}</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-angle-down"></span></div>
+                                <select id="room_type_${i}" class="form-control">
+                                    ${roomTypeOptions}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1 mb-3 mb-md-0">
+                            <label for="adults_${i}" class="font-weight-bold text-black">Adults</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-angle-down"></span></div>
+                                        <select id="adults_${i}" class="form-control">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4+</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-1 mb-3 mb-md-0">
+                            <label for="children_${i}" class="font-weight-bold text-black">Children</label>
+                            <div class="field-icon-wrap">
+                                <div class="icon"><span class="fa fa-angle-down"></span></div>
+                                        <select id="children_${i}" class="form-control">
+                                    <option value="0">0</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4+</option>
+                                </select>
+                            </div>
+                        </div>
+                    `);
+
+            }
+
+            container.append(`
+                        <div class="col-md-3 mb-3 mb-md-0 mt-3 align-self-end">
+                            <button type="button" class="btn btn-primary btn-block text-white" onclick="prevStep(2)">Back</button>
+                        </div>
+                        <div class="col-md-3 mb-3 mb-lg-0 mt-3 align-self-end">
+                            <button type="button" class="btn btn-primary btn-block text-white" onclick="nextStep(2)">Continue</button>
+                        </div>
+                    `);
+        }
+
+        $(document).ready(function () {
+            $('.form-step').not('.active-step').hide();
+        });
+
+        function generateCheckoutSummary(step, count) {
+            const numRooms = $('#num_rooms').val();
+            const roomSummaryContainer = $('#room-summary');
+            roomSummaryContainer.empty();
+            let subtotal = 0;
+            let discount = 0; 
+            let total = 0;
+            let totalAdults = 0;
+            let totalChildren = 0;
+
+            for (let i = 1; i <= numRooms; i++) {
+                if ($(`#room_type_${i}`).val() !== "") {
+                    const roomTypeId = $(`#room_type_${i}`).val();
+                    const adults = $(`#adults_${i}`).val();
+                    const children = $(`#children_${i}`).val();
+
+                    $.ajax({
+                        type: "GET",
+                        url: "/Booking/GetRoomPrice", 
+                        data: { roomTypeId: parseInt(roomTypeId) },
+                        success: function (response) {
+                            const roomPrice = response; 
+                            subtotal += roomPrice;
+                            totalAdults += parseInt(adults);
+                            totalChildren += parseInt(children);
+
+                            roomSummaryContainer.append(`
+                                <p>Room ${i}: ${roomTypeId.slice(1)} - $${roomPrice}, Adults: ${adults}, Children: ${children}</p>
+                            `);
+
+
+                            $('#summary-adults').text(totalAdults);
+                            $('#summary-children').text(totalChildren);
+                            if (i == numRooms) {
+                                if (count >= 1) {
+                                    discount = subtotal * 0.05;
+                                    total = subtotal - discount;
+                                    // Update the subtotal and total price
+                                    $('#subtotal-amount').text(subtotal);
+                                    $('#discount-amount').text(discount);
+                                    $('#total-amount').text(total);
+
+                                } else {
+                                    $('#subtotal-amount').text(subtotal);
+                                    $('#total-amount').text(subtotal);
+                                    $('#discount-amount').text(discount);
+                                }
+
+                                $('#step' + step).fadeOut(250, function () {
+                                    $('#step' + (step + 1)).fadeIn(250);
+                                });
+                            }
+
+
+                        },
+                        error: function (xhr, status, error) {
+                            console.error(xhr.responseText);
+                        }
+                    });
+                }
+
+
+            }
+
+
+        }
+
+
+        $(document).ready(function () {
+            $('#checkin_date, #checkout_date').datepicker({
+                format: 'd MM, yyyy',
+                autoclose: true
+            });
+        });
+    </script>
+}
+
+<style>
+    .form-step {
+        display: none;
+    }
+
+    .active-step {
+        display: block;
+    }
+</style>
